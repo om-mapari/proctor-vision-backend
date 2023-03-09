@@ -17,8 +17,8 @@ app.use(express.static("./public"));
 
 /*  route to set new value for interval  */
 app.get("/set_interval", (req, res) => {
-    interval = req.query.interval;
-    console.log('interval setted to ' + interval*1000);
+    interval = req.query.interval*1000;
+    console.log('interval setted to ' + interval);
     res.send({ success: true }).status(200).end();
 });
 
