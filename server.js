@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 
 const bodyParser = require("body-parser");
-const fs = require("fs");
 const cors = require("cors");
 const uniqueId = require("uniqid");
 const cloudinary = require("cloudinary").v2;
@@ -26,17 +25,16 @@ cloudinary.config({
     secure: true,
 });
 
-// console.log(cloudinary.config());
 
-/*  route to set new value for interval  */
+/*  route to set new value to interval  */
 app.get("/set_interval", (req, res) => {
     interval = req.query.interval * 1000;
     console.log("interval setted to " + interval);
     res.send({ success: true }).status(200).end();
 });
 
-/*  route for new user post  */
-app.post("/data", async (req, res) => {
+/*  route for createting new User */
+app.post("/createUser", async (req, res) => {
     try {
         const id = uniqueId.time();
 
@@ -62,7 +60,7 @@ app.post("/data", async (req, res) => {
     }
 });
 
-
+/*  route for uploading user images to cloudinary and then storing url to mongoDB */
 app.post("/upload-image", (req, res) => {
     const imageData = req.body.image;
     const userid = req.body.userid;
@@ -104,34 +102,6 @@ app.get("/retrieve-data", async (_req, res) => {
     
     res.json({"data" : data}).status(200).end();
 });
-
-/*  route to get all images in local storage */
-app.get("/get-images", (req, res) => {
-    fs.readdir("./public/imageCollection", (err, files) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send("Failed to list images");
-        } else {
-            const images = files.filter((file) => file.startsWith("image-"));
-            res.send(images);
-        }
-    });
-});
-
-/*  route to get single image */
-// app.get("/get-image/:image", (req, res) => { // image-1678347645756.png
-//     const image = req.params.image;
-//     res.sendFile(
-//         image,
-//         { root: __dirname + "/public/imageCollection" },
-//         (err) => {
-//             if (err) {
-//                 console.error(err);
-//                 res.status(404).send("Image not found");
-//             }
-//         }
-//     );
-// });
 
 app.listen(3000, () => {
     console.log("Server listening on port 3000");
