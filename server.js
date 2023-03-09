@@ -6,6 +6,10 @@ const fs = require("fs");
 const cors = require("cors");
 const path = require("path");
 const uniqueId = require("uniqid");
+const cloudinary = require("cloudinary").v2;
+const dotenv = require("dotenv");
+
+dotenv.config();
 var interval = 5000;
 
 
@@ -13,6 +17,16 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use(express.static("./public"));
+
+
+/*  Configuring cloudinary */
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_KEY,
+    api_secret: process.env.CLOUD_SECRET,
+    secure: true,
+});
+// console.log(cloudinary.config());
 
 
 /*  route to set new value for interval  */
@@ -75,6 +89,7 @@ app.post("/upload-image", (req, res) => {
     });
     // res.json({interval}).status(200).end();
 });
+
 
 /*  route to get all users data */
 app.get("/retrieve-data", async (_req, res) => {
