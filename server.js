@@ -58,6 +58,31 @@ app.get("/retrieve-data", async (_req, res) => {
     res.json(data).status(200).end();
 });
 
+app.get("/get-images", (req, res) => {
+    fs.readdir("./public/imageCollection", (err, files) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Failed to list images");
+        } else {
+            const images = files.filter((file) => file.startsWith("image-"));
+            res.send(images);
+        }
+    });
+});
+
+// app.get("/get-image/:image", (req, res) => { // image-1678347645756.png
+//     const image = req.params.image;
+//     res.sendFile(
+//         image,
+//         { root: __dirname + "/public/imageCollection" },
+//         (err) => {
+//             if (err) {
+//                 console.error(err);
+//                 res.status(404).send("Image not found");
+//             }
+//         }
+//     );
+// });
 
 app.listen(3000, () => {
     console.log("Server listening on port 3000");
