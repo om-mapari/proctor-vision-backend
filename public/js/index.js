@@ -1,5 +1,5 @@
 function getImages() {
-    fetch("http://localhost:3000/images")
+    fetch("http://localhost:3000/get-images")
         .then((response) => response.json())
         .then((images) => {
             // const imageContainer = document.getElementById('image-container');
@@ -7,7 +7,7 @@ function getImages() {
             imageContainer.setAttribute("id", "image-container");
             images.forEach((image) => {
                 const img = document.createElement("img");
-                img.src = `http://localhost:3000/images/${image}`;
+                img.src = `http://localhost:3000/imageCollection/${image}`;
                 imageContainer.appendChild(img);
             });
             document.body.appendChild(imageContainer);

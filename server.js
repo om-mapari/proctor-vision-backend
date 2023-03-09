@@ -55,11 +55,14 @@ app.post("/data", async (req, res) => {
 app.post("/upload-image", (req, res) => {
 
     const imageData = req.body.image;
-    const nameData = req.body.name;
-    // console.log(nameData);
+    const userid = req.body.userid;
+
+    
     const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
     const timestamp = new Date().getTime(); // timestamp
-    const fileName = `public/imageCollection/image-${timestamp}.png`;
+    const fileName = `public/imageCollection/${userid}/image-${timestamp}.png`;
+
+
     fs.writeFile(fileName, imageBuffer, (err) => {
         if (err) {
             console.error(err);
