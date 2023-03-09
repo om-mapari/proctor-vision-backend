@@ -15,14 +15,14 @@ app.use(cors());
 app.use(express.static("./public"));
 
 
-/*  route to set new value interval  */
+/*  route to set new value for interval  */
 app.get("/set_interval", (req, res) => {
     interval = req.query.interval;
     console.log('interval setted to ' + interval*1000);
     res.send({ success: true }).status(200).end();
 });
 
-
+/*  route for new user request  */
 app.post("/data", async (req, res) => {
     try {
         const id = uniqueId.time();
@@ -51,6 +51,7 @@ app.post("/data", async (req, res) => {
     }
 });
 
+/*  route to get all users data */
 app.get("/retrieve-data", async (_req, res) => {
     let data = await fs.readFileSync("./db/data.json", "utf-8"); // readFile
     data = JSON.parse(data);
@@ -58,6 +59,7 @@ app.get("/retrieve-data", async (_req, res) => {
     res.json(data).status(200).end();
 });
 
+/*  route to get all images in local storage */
 app.get("/get-images", (req, res) => {
     fs.readdir("./public/imageCollection", (err, files) => {
         if (err) {
@@ -70,6 +72,8 @@ app.get("/get-images", (req, res) => {
     });
 });
 
+
+/*  route to get single image */
 // app.get("/get-image/:image", (req, res) => { // image-1678347645756.png
 //     const image = req.params.image;
 //     res.sendFile(
