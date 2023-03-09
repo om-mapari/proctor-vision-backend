@@ -1,4 +1,3 @@
-
 const getData = async () => {
     let response = await fetch("http://localhost:3000/retrieve-data");
     response = await response.json(); 
