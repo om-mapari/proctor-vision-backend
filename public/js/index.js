@@ -1,7 +1,9 @@
 
 const getData = async () => {
-    const response = await fetch("http://localhost:3000/retrieve-data");
-    const data = await response.json();
+    let response = await fetch("http://localhost:3000/retrieve-data");
+    response = await response.json(); 
+    const data = response.data;
+    console.log(data);
     data.forEach(user => {
         /* ------------------------- Inserting user details ------------------------- */
         const userDiv = document.createElement('div');

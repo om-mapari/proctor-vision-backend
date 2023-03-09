@@ -4,12 +4,13 @@ const app = express();
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const cors = require("cors");
-const path = require("path");
 const uniqueId = require("uniqid");
 const cloudinary = require("cloudinary").v2;
-const dotenv = require("dotenv");
+require("dotenv").config();
+require('./db/config.js').connect();
+const UserDataSchema = require('./models/userdata.js');
 
-dotenv.config();
+
 var interval = 5000;
 
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -41,21 +42,19 @@ app.post("/data", async (req, res) => {
 
         const { firstName, lastName, email, testInvitation } = req.body;
         console.log(req.body);
-        // updating data
-        let data = await fs.readFileSync("./db/data.json", "utf-8"); // readFile
-        console.log(data);
+        
+        const UserDataSchemaObj = {
+            firstName:firstName,
+            lastName:lastName,
+            email:email,
+            testInvitation:testInvitation,
+            id:id,
+            images: []
+        }
 
-        data = JSON.parse(data);
-        data.push({
-            firstName,
-            lastName,
-            email,
-            testInvitation,
-            id,
-            images: [],
-        });
-        await fs.writeFileSync("./db/data.json", JSON.stringify(data)); // writeFile
-        // send userid to the extension
+        const data = new UserDataSchema(UserDataSchemaObj);
+        await data.save();  // async 
+
         res.send({ userid: id }).status(200).end();
     } catch {
         // if error is occured
@@ -63,29 +62,6 @@ app.post("/data", async (req, res) => {
     }
 });
 
-/* route for storing images */
-// app.post("/upload-image", (req, res) => {
-
-//     const imageData = req.body.image;
-//     const userid = req.body.userid;
-
-//     const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
-//     const timestamp = new Date().getTime(); // timestamp
-//     const fileName = `public/imageCollection/image-${timestamp}.png`;
-
-//     fs.writeFile(fileName, imageBuffer, (err) => {
-//         if (err) {
-//             console.error(err);
-//             res.status(500).send("Failed to save image");
-//         } else {
-//             console.log(`Image saved as ${fileName}`);
-
-//             // multiface recog
-//             res.json({interval}).status(200).end();
-//         }
-//     });
-//     // res.json({interval}).status(200).end();
-// });
 
 app.post("/upload-image", (req, res) => {
     const imageData = req.body.image;
@@ -102,16 +78,20 @@ app.post("/upload-image", (req, res) => {
             public_id: fileName
         },async  (error, result)  => {
             if(error) res.status(500).send("Failed to save image");
-            else{
-                let data = await fs.readFileSync("./db/data.json", "utf-8");
-                data = JSON.parse(data);
-                const index = data.findIndex((user) => user.id === req.body.userid);
-                data[index].images.push({
-                    id: fileName,
-                    url: result.secure_url,
-                });
-                console.log(result.secure_url);
-                await fs.writeFileSync("./db/data.json", JSON.stringify(data)); // writeFile
+            else {
+
+                try {
+                    const user = await UserDataSchema.findOne({id:userid});
+                    const images = user.images;
+                    images.push({
+                        id: fileName,
+                        url: result.secure_url,
+                    });
+                    await UserDataSchema.findOneAndUpdate({id:userid}, {images:images});    
+                } catch (e) {
+                    console.log('can not store image in MongoDB', e);
+                }
+       
                 res.json({interval}).status(200).end();
             }
         }
@@ -120,10 +100,9 @@ app.post("/upload-image", (req, res) => {
 
 /*  route to get all users data */
 app.get("/retrieve-data", async (_req, res) => {
-    let data = await fs.readFileSync("./db/data.json", "utf-8"); // readFile
-    data = JSON.parse(data);
-
-    res.json(data).status(200).end();
+    const data = await UserDataSchema.find({});
+    
+    res.json({"data" : data}).status(200).end();
 });
 
 /*  route to get all images in local storage */
