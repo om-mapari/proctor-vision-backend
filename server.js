@@ -106,6 +106,11 @@ app.get("/retrieve-data", async (_req, res) => {
     res.json({ data: data }).status(200).end();
 });
 
+app.get("/cleardb", async (_req, res) => {
+    const data = await UserDataSchema.deleteMany();
+    res.json({ message: data }).status(200).end();
+});
+
 app.listen(port, () =>
-    console.log(`API is setup on✅... http://localhost:${port}/api/v1/tasks`)
+    console.log(`API is setup on✅... http://localhost:${port}/`)
 );
