@@ -51,6 +51,13 @@ app.post("/data", async (req, res) => {
     }
 });
 
+app.get("/retrieve-data", async (_req, res) => {
+    let data = await fs.readFileSync("./db/data.json", "utf-8"); // readFile
+    data = JSON.parse(data);
+
+    res.json(data).status(200).end();
+});
+
 
 app.listen(3000, () => {
     console.log("Server listening on port 3000");
