@@ -12,12 +12,10 @@ const dotenv = require("dotenv");
 dotenv.config();
 var interval = 5000;
 
-
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use(express.static("./public"));
-
 
 /*  Configuring cloudinary */
 cloudinary.config({
@@ -26,13 +24,13 @@ cloudinary.config({
     api_secret: process.env.CLOUD_SECRET,
     secure: true,
 });
-// console.log(cloudinary.config());
 
+// console.log(cloudinary.config());
 
 /*  route to set new value for interval  */
 app.get("/set_interval", (req, res) => {
-    interval = req.query.interval*1000;
-    console.log('interval setted to ' + interval);
+    interval = req.query.interval * 1000;
+    console.log("interval setted to " + interval);
     res.send({ success: true }).status(200).end();
 });
 
@@ -71,11 +69,9 @@ app.post("/data", async (req, res) => {
 //     const imageData = req.body.image;
 //     const userid = req.body.userid;
 
-    
 //     const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
 //     const timestamp = new Date().getTime(); // timestamp
 //     const fileName = `public/imageCollection/image-${timestamp}.png`;
-
 
 //     fs.writeFile(fileName, imageBuffer, (err) => {
 //         if (err) {
@@ -84,8 +80,6 @@ app.post("/data", async (req, res) => {
 //         } else {
 //             console.log(`Image saved as ${fileName}`);
 
-            
-
 //             // multiface recog
 //             res.json({interval}).status(200).end();
 //         }
@@ -93,36 +87,36 @@ app.post("/data", async (req, res) => {
 //     // res.json({interval}).status(200).end();
 // });
 
-
-
 app.post("/upload-image", (req, res) => {
-
     const imageData = req.body.image;
     const userid = req.body.userid;
 
-    
-    const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
+
     const timestamp = new Date().getTime(); // timestamp
-    const fileName = `public/imageCollection/image-${timestamp}.png`;
+    const fileName = `image-${timestamp}`;
 
-
-    fs.writeFile(fileName, imageBuffer, (err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send("Failed to save image");
-        } else {
-            console.log(`Image saved as ${fileName}`);
-
-            
-            // multiface recog
-            res.json({interval}).status(200).end();
+    cloudinary.uploader.upload(imageData, {
+            overwrite: true,
+            invalidate: true,
+            folder: "proctor-vision/"+userid,
+            public_id: fileName
+        },async  (error, result)  => {
+            if(error) res.status(500).send("Failed to save image");
+            else{
+                let data = await fs.readFileSync("./db/data.json", "utf-8");
+                data = JSON.parse(data);
+                const index = data.findIndex((user) => user.id === req.body.userid);
+                data[index].images.push({
+                    id: fileName,
+                    url: result.secure_url,
+                });
+                console.log(result.secure_url);
+                await fs.writeFileSync("./db/data.json", JSON.stringify(data)); // writeFile
+                res.json({interval}).status(200).end();
+            }
         }
-    });
-    // res.json({interval}).status(200).end();
+    );
 });
-
-
-
 
 /*  route to get all users data */
 app.get("/retrieve-data", async (_req, res) => {
@@ -144,7 +138,6 @@ app.get("/get-images", (req, res) => {
         }
     });
 });
-
 
 /*  route to get single image */
 // app.get("/get-image/:image", (req, res) => { // image-1678347645756.png
