@@ -22,7 +22,7 @@ app.get("/set_interval", (req, res) => {
     res.send({ success: true }).status(200).end();
 });
 
-/*  route for new user request  */
+/*  route for new user post  */
 app.post("/data", async (req, res) => {
     try {
         const id = uniqueId.time();
@@ -49,6 +49,28 @@ app.post("/data", async (req, res) => {
         // if error is occured
         res.send({ error: "Something went wrong" }).status(500).end();
     }
+});
+
+/* route for storing images */
+app.post("/upload-image", (req, res) => {
+
+    const imageData = req.body.image;
+    const nameData = req.body.name;
+    // console.log(nameData);
+    const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
+    const timestamp = new Date().getTime(); // timestamp
+    const fileName = `public/imageCollection/image-${timestamp}.png`;
+    fs.writeFile(fileName, imageBuffer, (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Failed to save image");
+        } else {
+            console.log(`Image saved as ${fileName}`);
+            // multiface recog
+            res.json({interval}).status(200).end();
+        }
+    });
+    // res.json({interval}).status(200).end();
 });
 
 /*  route to get all users data */
