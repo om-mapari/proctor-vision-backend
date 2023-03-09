@@ -66,6 +66,35 @@ app.post("/data", async (req, res) => {
 });
 
 /* route for storing images */
+// app.post("/upload-image", (req, res) => {
+
+//     const imageData = req.body.image;
+//     const userid = req.body.userid;
+
+    
+//     const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
+//     const timestamp = new Date().getTime(); // timestamp
+//     const fileName = `public/imageCollection/image-${timestamp}.png`;
+
+
+//     fs.writeFile(fileName, imageBuffer, (err) => {
+//         if (err) {
+//             console.error(err);
+//             res.status(500).send("Failed to save image");
+//         } else {
+//             console.log(`Image saved as ${fileName}`);
+
+            
+
+//             // multiface recog
+//             res.json({interval}).status(200).end();
+//         }
+//     });
+//     // res.json({interval}).status(200).end();
+// });
+
+
+
 app.post("/upload-image", (req, res) => {
 
     const imageData = req.body.image;
@@ -74,7 +103,7 @@ app.post("/upload-image", (req, res) => {
     
     const imageBuffer = Buffer.from(imageData.split(",")[1], "base64");
     const timestamp = new Date().getTime(); // timestamp
-    const fileName = `public/imageCollection/${userid}/image-${timestamp}.png`;
+    const fileName = `public/imageCollection/image-${timestamp}.png`;
 
 
     fs.writeFile(fileName, imageBuffer, (err) => {
@@ -83,12 +112,16 @@ app.post("/upload-image", (req, res) => {
             res.status(500).send("Failed to save image");
         } else {
             console.log(`Image saved as ${fileName}`);
+
+            
             // multiface recog
             res.json({interval}).status(200).end();
         }
     });
     // res.json({interval}).status(200).end();
 });
+
+
 
 
 /*  route to get all users data */
