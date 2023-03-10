@@ -1,3 +1,12 @@
+
+const intervalInput = document.querySelector('input[name="interval"]');
+const intervalValue = document.querySelector('.interval-value');
+
+intervalInput.addEventListener('input', () => {
+  intervalValue.textContent = `${intervalInput.value} min`;
+});
+
+
 const getData = async () => {
     let response = await fetch("http://localhost:3000/retrieve-data");
     response = await response.json(); 
@@ -5,12 +14,13 @@ const getData = async () => {
     console.log(data);
     data.forEach(user => {
         /* ------------------------- Inserting user details ------------------------- */
-        const userDiv = document.createElement('div');
+        const userDiv = document.createElement('table');
         userDiv.classList.add('user');
         userDiv.innerHTML = `
-            <div class="user__name">Name - ${`${user.firstName} ${user.lastName} `}</div>
-            <div class="user__email">Email - ${user.email}</div>
-            <div class="user__invite">Invite Code - ${user.testInvitation}</div>
+            <tr><td>First Name</td><td>${user.firstName}</td></tr>
+            <tr><td>Last Name</td><td>${user.lastName}</td></tr>
+            <tr><td>Email</td><td>${user.email}</td></tr>
+            <tr><td>Invite Code</td><td>${user.testInvitation}</td></tr>
         `;
         document.querySelector('.container').appendChild(userDiv);
         
@@ -36,11 +46,10 @@ const getData = async () => {
         
             wrapper.innerHTML = `<p class='warn'> No images uploaded yet! </p>`;
         }
-        
-        document.querySelector('.container').appendChild(wrapper);
-
+     document.querySelector('.container').appendChild(wrapper);
     })
 }
+
 
 document.querySelector('button').addEventListener('click', e => {
     e.preventDefault();
@@ -49,8 +58,9 @@ document.querySelector('button').addEventListener('click', e => {
 
     fetch(`http://localhost:3000/set_interval?interval=${val}`)
     .then( _ => {
-        document.querySelector('.span_int').innerText = 'Interval set!';
-        setTimeout(() => document.querySelector('.span_int').innerText = 'Set the interval of the frames (in minutes).', 3000);
+        const dtn = document.querySelector('button')
+        dtn.innerText = `Interval is settted to ${val} min`
+        setTimeout(() => dtn.innerText = 'Reset Interval Value', 3000);
     });
 });
 

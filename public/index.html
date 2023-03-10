@@ -15,11 +15,10 @@
   <h1 class="header">Admin Dashboard</h1>
   <!-- -------------------------- To set intervals --------------------------- -->
   <div class="set_interval">
-      <input name="interval" type="number" min="1" value="3"/>
-      <button>Set</button>
-      <span class="span_int">Set the interval of the frames (in minutes).</span>
+    <input name="interval" type="range" min="1" max="20" value="3"/>
+    <br/> <span class="interval-value">3 min</span>
+    <br/> <button>Reset Interval Value</button>
   </div>
-
   <!-- ----------------------- To insert user details & images ------------------------ -->
   <div class="container"></div>
     <script type="module" src="js/index.js"></script>
