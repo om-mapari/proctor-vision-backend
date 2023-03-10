@@ -66,7 +66,7 @@ app.post("/upload-image", (req, res) => {
 
     const timestamp = new Date().getTime(); // timestamp
     const fileName = `image-${timestamp}`;
-
+    console.log(fileName);
     cloudinary.uploader.upload(
         imageData,
         {
