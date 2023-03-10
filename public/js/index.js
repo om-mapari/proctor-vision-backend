@@ -34,7 +34,10 @@ const getData = async () => {
             const img = document.createElement('img');
             const title = document.createElement('span');
             title.classList.add('span');
-            title.innerHTML = image.id;
+            const m = image.id;
+            const date = new Date(parseInt(m.split('-')[1]));
+            const txt = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`
+            title.innerHTML = txt;
             img.src = image.url;
             card.appendChild(img);
             card.appendChild(title);
