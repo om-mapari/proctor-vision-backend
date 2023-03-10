@@ -27,8 +27,8 @@ cloudinary.config({
 
 /*  route to set new value to interval  */
 app.get("/set_interval", (req, res) => {
-    interval = req.query.interval * 1000;
-    console.log("interval setted to " + interval);
+    interval = req.query.interval * 60 * 1000;
+    console.log("interval setted to " + interval + " miliseconds");
     res.send({ success: true }).status(200).end();
 });
 
