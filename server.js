@@ -6,7 +6,8 @@ const cors = require("cors");
 const uniqueId = require("uniqid");
 const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
-require("./db/config.js").connect();
+// require("./db/config.js").connect();
+const connectDB = require("./db/config.js")
 const UserDataSchema = require("./models/userdata.js");
 const port = process.env.PORT || 3000;
 
@@ -111,6 +112,17 @@ app.get("/cleardb", async (_req, res) => {
     res.json({ message: data }).status(200).end();
 });
 
-app.listen(port, () =>
-    console.log(`API is setup on✅... http://localhost:${port}/`)
-);
+
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGO_URI);
+        app.listen(port, () =>
+            console.log(`API is setup on✅... http://localhost:${port}/`)
+        );
+        console.log("connected to db🔥...");
+    } catch (err) {
+        console.log("error with db❌ =>", err);
+    }
+};
+
+start();
