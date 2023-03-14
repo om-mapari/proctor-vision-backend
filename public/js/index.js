@@ -8,7 +8,7 @@ intervalInput.addEventListener('input', () => {
 
 
 const getData = async () => {
-    let response = await fetch("http://localhost:3000/retrieve-data");
+    let response = await fetch("https://proctor-vision.cyclic.app/retrieve-data");
     response = await response.json(); 
     const data = response.data;
     console.log(data);
@@ -59,7 +59,7 @@ document.querySelector('button').addEventListener('click', e => {
     const val = document.querySelector('input').value;
     console.log(val)
 
-    fetch(`http://localhost:3000/set_interval?interval=${val}`)
+    fetch(`https://proctor-vision.cyclic.app/set_interval?interval=${val}`)
     .then( _ => {
         const dtn = document.querySelector('button')
         dtn.innerText = `Interval is settted to ${val} min`
